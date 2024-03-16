@@ -1,0 +1,55 @@
+diff '--color=auto' -u -r dpkg-1.21.1ubuntu2.3/debian/changelog dpkg-1.21.1ubuntu2.4/debian/changelog
+--- dpkg-1.21.1ubuntu2.3/debian/changelog	2024-02-23 15:53:39.000000000 +0100
++++ dpkg-1.21.1ubuntu2.4/debian/changelog	2024-03-16 00:24:43.000000000 +0100
+@@ -1,3 +1,10 @@
++dpkg (1.21.1ubuntu2.4) UNRELEASED; urgency=medium
++
++  * Do not execute chown() if executed within a Singularity container, so that
++    rootless containers could install packages using apt (and dpkg --force-not-root)
++
++ -- marcusmae <dmitry@kernelgen.org>  Sat, 16 Mar 2024 00:24:43 +0100
++
+ dpkg (1.21.1ubuntu2.3) jammy; urgency=medium
+ 
+   [ Luca Boccassi ]
+diff '--color=auto' -u -r dpkg-1.21.1ubuntu2.3/src/archives.c dpkg-1.21.1ubuntu2.4/src/archives.c
+--- dpkg-1.21.1ubuntu2.3/src/archives.c	2021-12-05 23:59:35.000000000 +0100
++++ dpkg-1.21.1ubuntu2.4/src/archives.c	2024-03-16 00:19:56.000000000 +0100
+@@ -392,7 +392,7 @@
+             namenode->statoverride->gid,
+             namenode->statoverride->mode);
+     rc = fchown(fd, st->uid, st->gid);
+-    if (forcible_nonroot_error(rc))
++    if (forcible_nonroot_error(rc) && !getenv("SINGULARITY_NAME"))
+       ohshite(_("error setting ownership of '%.255s'"), te->name);
+     rc = fchmod(fd, st->mode & ~S_IFMT);
+     if (forcible_nonroot_error(rc))
+@@ -509,11 +509,11 @@
+ 
+   if (te->type == TAR_FILETYPE_SYMLINK) {
+     rc = lchown(path, st->uid, st->gid);
+-    if (forcible_nonroot_error(rc))
++    if (forcible_nonroot_error(rc) && !getenv("SINGULARITY_NAME"))
+       ohshite(_("error setting ownership of symlink '%.255s'"), path);
+   } else {
+     rc = chown(path, st->uid, st->gid);
+-    if (forcible_nonroot_error(rc))
++    if (forcible_nonroot_error(rc) && !getenv("SINGULARITY_NAME"))
+       ohshite(_("error setting ownership of '%.255s'"), path);
+     rc = chmod(path, st->mode & ~S_IFMT);
+     if (forcible_nonroot_error(rc))
+diff '--color=auto' -u -r dpkg-1.21.1ubuntu2.3/src/statcmd.c dpkg-1.21.1ubuntu2.4/src/statcmd.c
+--- dpkg-1.21.1ubuntu2.3/src/statcmd.c	2021-12-05 23:59:35.000000000 +0100
++++ dpkg-1.21.1ubuntu2.4/src/statcmd.c	2024-03-16 00:20:49.000000000 +0100
+@@ -185,7 +185,7 @@
+ static void
+ statdb_node_apply(const char *filename, struct file_stat *filestat)
+ {
+-	if (chown(filename, filestat->uid, filestat->gid) < 0)
++	if (chown(filename, filestat->uid, filestat->gid) < 0 && !getenv("SINGULARITY_NAME"))
+ 		ohshite(_("error setting ownership of '%.255s'"), filename);
+ 	if (chmod(filename, filestat->mode & ~S_IFMT))
+ 		ohshite(_("error setting permissions of '%.255s'"), filename);
+File dpkg-1.21.1ubuntu2.3/tests/t-unpack-fifo/pkg-fifo/test-fifo is a fifo while file dpkg-1.21.1ubuntu2.4/tests/t-unpack-fifo/pkg-fifo/test-fifo is a fifo
+File dpkg-1.21.1ubuntu2.3/tests/t-unpack-hardlink/pkg-hardlink/test-fifo-link0 is a fifo while file dpkg-1.21.1ubuntu2.4/tests/t-unpack-hardlink/pkg-hardlink/test-fifo-link0 is a fifo
+File dpkg-1.21.1ubuntu2.3/tests/t-unpack-hardlink/pkg-hardlink/test-fifo-link1 is a fifo while file dpkg-1.21.1ubuntu2.4/tests/t-unpack-hardlink/pkg-hardlink/test-fifo-link1 is a fifo
