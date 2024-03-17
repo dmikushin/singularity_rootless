@@ -9,4 +9,7 @@ From: ubuntu:22.04
     bash -c 'mv /usr/bin/dpkg /usr/bin/dpkg.real && echo -e "#!/bin/bash\ndpkg.real --force-not-root \"\$@\"" >/usr/bin/dpkg && chmod +x /usr/bin/dpkg'
     bash -c 'echo -e "#!/bin/bash\nLD_PRELOAD=/usr/lib/libfakechown.so \"\$@\"" >/usr/bin/sudo && chmod +x /usr/bin/sudo'
     sudo apt update
-    DEBIAN_FRONTEND=noninteractive sudo apt install -y tzdata vim fish mc locales locales-all git
+    DEBIAN_FRONTEND=noninteractive sudo apt install -y tzdata vim fish mc locales locales-all git dropbear
+
+%startscript
+    sudo /usr/sbin/dropbear -E -p ${1:-22221}

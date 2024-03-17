@@ -2,7 +2,7 @@
 
 This is an Ubuntu 22.04 Singularity container made free of root requirement for using `apt`.
 
-[Singularity](https://docs.sylabs.io/guides/3.5/user-guide/introduction.html) is a way to run containers in unpriviledged environments, where `setuid`, `seccomp` and `namespaces` are not available for security reasons. Despite that the unpriviledged container could nicely serve the most of the daily use needs such as CI or code development, some distro utilities historically require the root priviledges. For Ubuntu the most impotant utility is APT package manager. Although it normally requires admin privilege, this requirement is not mandatory by design and can be lifted. The purpose of this repository is to provide modifications that allow to run APT without admin priviliges in the Singularity container.
+[Singularity](https://docs.sylabs.io/guides/3.5/user-guide/introduction.html) is a way to run containers in unpriviledged environments, where `setuid`, `seccomp` and `namespaces` are not available for security reasons. Despite that an unpriviledged container could nicely serve the most of the daily needs such as CI or code development, some distro utilities require the root priviledges for historical reasons. For Ubuntu the most impotant utility is APT package manager. Although it normally requires admin privilege, this requirement is not mandatory by design and can be lifted. The purpose of this repository is to provide modifications that allow to run APT without admin priviliges in the Singularity container.
 
 The modification consists of two parts:
 
@@ -37,6 +37,12 @@ sudo apt install g++
 OR launch container in the background and connect to it through SSH server (dropbear):
 
 ```
+singularity instance start --writable ./ubuntu_rootless ubuntu_rootless
+```
 
+Stop the container:
+
+```
+singularity instance stop ubuntu_rootless
 ```
 
