@@ -1,0 +1,40 @@
+Bootstrap: docker
+From: centos:7
+
+%post
+    find /usr -type d -exec chmod +w {} \;
+    sed -i "s/def checkRootUID(base):/def checkRootUID(base):\n    return/" /usr/share/yum-cli/yumcommands.py
+    yum install -y epel-release
+    yum install -y https://repo.ius.io/ius-release-el7.rpm
+    yum install -y vim fish mc glibc-langpack-en git236 wget gcc gcc-c++ make autoconf automake libtool
+
+    wget https://go.dev/dl/go1.22.1.linux-amd64.tar.gz
+    tar -C /usr/local -xzf go1.22.1.linux-amd64.tar.gz
+    rm -rf go1.22.1.linux-amd64.tar.gz
+    export PATH=$PATH:/usr/local/go/bin
+
+    yum install -y fuse-devel xz-devel lzo-devel lz4-devel libzstd-devel squashfs-tools
+    mkdir forge
+    cd forge
+    git clone https://github.com/sylabs/singularity.git
+    cd singularity/
+    git checkout v4.1.2
+    git submodule init
+    git submodule update
+    ./mconfig --without-suid --without-seccomp --without-conmon --prefix=/opt/singularity
+    make -C builddir -j4
+    make -C builddir install
+    cd ..
+
+    yum install -y libtalloc-devel libarchive-devel
+    git clone https://github.com/proot-me/proot.git
+    cd proot/
+    make -C src loader.elf loader-m32.elf build.h
+    make -C src proot
+    make -C src install
+
+%startscript
+    sudo /usr/sbin/dropbear -E -p ${1:-22221}
+
+%environment
+    export PATH=$PATH:/usr/local/go/bin:/opt/singularity/bin
