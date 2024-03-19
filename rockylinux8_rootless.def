@@ -1,0 +1,46 @@
+Bootstrap: docker
+From: rockylinux:8
+
+%files
+    ./libfakechown.so /usr/lib/libfakechown.so
+
+%post
+    sed -i 's/root_user = True/root_user = False/g' /usr/lib/python3.6/site-packages/dnf/cli/commands/*.py
+    bash -c 'echo -e "#!/bin/bash\nLD_PRELOAD=/usr/lib/libfakechown.so \"\$@\"" >/usr/bin/sudo && chmod +x /usr/bin/sudo'
+    dnf install -y epel-release
+    dnf install -y vim mc glibc-langpack-en git
+
+    #dnf install -y wget
+    #wget https://go.dev/dl/go1.22.1.linux-amd64.tar.gz
+    #tar -C /usr/local -xzf go1.22.1.linux-amd64.tar.gz
+    #rm -rf go1.22.1.linux-amd64.tar.gz
+    #export PATH=$PATH:/usr/local/go/bin
+
+    #dnf install -y gcc gcc-c++ make autoconf automake libtool fuse-devel xz-devel lzo-devel lz4-devel libzstd-devel squashfs-tools
+    #mkdir forge
+    #cd forge
+    #git clone https://github.com/sylabs/singularity.git
+    #cd singularity/
+    #git checkout v4.1.2
+    #git submodule init
+    #git submodule update
+    #./mconfig --without-suid --without-seccomp --without-conmon --prefix=/opt/singularity
+    #make -C builddir -j4
+    #make -C builddir install
+    #cd ..
+    #rm -rf singularity
+
+    #dnf install -y libtalloc-devel libarchive-devel
+    #git clone https://github.com/proot-me/proot.git
+    #cd proot/
+    #make -C src loader.elf loader-m32.elf build.h
+    #make -C src proot
+    #make -C src install
+    #cd ..
+    #rm -rf proot
+
+#%startscript
+#    sudo /usr/sbin/dropbear -E -p ${1:-22220}
+
+#%environment
+#    export PATH=$PATH:/usr/local/go/bin:/opt/singularity/bin
