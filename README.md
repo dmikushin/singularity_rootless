@@ -46,3 +46,10 @@ Stop the container:
 singularity instance stop ubuntu_rootless
 ```
 
+
+## TODO
+
+1. Include modern version of Singularity CE compiled from source without suid
+2. Include static version of `proot`, in order to build containers without fakeroot
+3. Modify `dropbear` and `/etc/shells` to acknowledge the `SIGNULARITY_SHELL` setting
+

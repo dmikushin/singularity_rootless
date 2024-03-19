@@ -10,6 +10,10 @@ From: ubuntu:22.04
     bash -c 'echo -e "#!/bin/bash\nLD_PRELOAD=/usr/lib/libfakechown.so \"\$@\"" >/usr/bin/sudo && chmod +x /usr/bin/sudo'
     sudo apt update
     DEBIAN_FRONTEND=noninteractive sudo apt install -y tzdata vim fish mc locales locales-all git dropbear
+    bash -c 'echo -e "# /etc/shells: always use fish as a login shell\n/usr/bin/fish" >/etc/shells'
 
 %startscript
     sudo /usr/sbin/dropbear -E -p ${1:-22221}
+
+%environment
+    export SINGULARITY_SHELL=/usr/bin/fish
