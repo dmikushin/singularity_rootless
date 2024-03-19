@@ -1,4 +1,4 @@
-# Rootless Singularity container
+# Rootless Singularity containers
 
 These are [Singularity](https://docs.sylabs.io/guides/3.5/user-guide/introduction.html) containers for interactive use, made free of root requirement for using package managers.
 
