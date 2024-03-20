@@ -20,7 +20,7 @@ From: ubuntu:22.04
     cd ../..
     rm -rf dropbear
     mkdir -p /etc/dropbear
-    bash -c 'echo -e "# /etc/shells: always use fish as a login shell\n/usr/bin/fish" >/etc/shells'
+    bash -c 'echo -e "# /etc/shells: always use fish as a login shell\n/usr/bin/fish\n/bin/bash" >/etc/shells'
 
 %startscript
     sudo /usr/local/sbin/dropbear -w -s -e -R -E -p ${1:-22221}
