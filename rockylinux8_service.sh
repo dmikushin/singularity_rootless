@@ -78,6 +78,15 @@ status() {
     fi
 }
 
+shell() {
+    # Stop Singularity instance, of not already stopped.
+    if singularity instance list | grep -q $CONTAINER_NAME; then
+        singularity shell $CONTAINER_NAME
+    else
+        echo "$CONTAINER_NAME Singularity container is not running"
+    fi
+}
+
 case "$1" in
 start)
     start
@@ -91,6 +100,9 @@ restart)
     ;;
 status)
     status
+    ;;
+shell)
+    shell
     ;;
 *)
     echo "Usage: $0 {start|stop|restart|status}"
