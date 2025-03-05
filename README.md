@@ -9,6 +9,8 @@ The modification consists of two parts:
 1. Replacement `sudo` executable, which allows any command to ignore `chown()` errors
 2. Modified `dnf` executable, which ignores the root priviledged checking
 
+Use with care, as the rootless mode naturally allows any modification to the critical system files.
+
 
 ## Building
 
@@ -27,7 +29,7 @@ singularity build --fix-perms --sandbox ./rockylinux8_rootless ./rockylinux8_roo
 
 # Usage
 
-Lauch interactive session:
+Launch interactive session:
 
 ```
 singularity exec --writable ./rockylinux8_rootless fish
