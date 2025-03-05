@@ -9,12 +9,14 @@ From: rockylinux:8
     find /usr -type d -exec chmod +w {} \;
     find /usr/lib/python3.6/site-packages/dnf/cli/commands -type f -name "*.py" -exec sed -i 's/root_user = True/root_user = False/g' {} \;
     dnf install -y epel-release
-    dnf install -y vim mc glibc-langpack-en git gcc zlib-devel make
+    dnf install -y fish vim mc glibc-langpack-en git gcc zlib-devel make
     gcc -O3 -g -shared -fPIC -o /usr/lib/libfakechown.so /fakechown.c -ldl
     rm /fakechown.c
     bash -c 'echo -e "#!/bin/bash\nLD_PRELOAD=/usr/lib/libfakechown.so \"\$@\"" >/usr/bin/sudo && chmod +x /usr/bin/sudo'
+    bash -c 'echo -e "# /etc/shells: always use fish as a login shell\n/usr/bin/fish\n/bin/bash" >/etc/shells'
 
 #%startscript
 #    sudo /usr/sbin/dropbear -E -p ${1:-22220}
 
-#%environment
+%environment
+    export SINGULARITY_SHELL=/usr/bin/fish
