@@ -7,7 +7,7 @@ From: rockylinux:8
 %post
     dnf install -y findutils
     find /usr -type d -exec chmod +w {} \;
-    sed -i 's/root_user = True/root_user = False/g' /usr/lib/python3.6/site-packages/dnf/cli/commands/*.py
+    find /usr/lib/python3.6/site-packages/dnf/cli/commands -type f -name "*.py" -exec sed -i 's/root_user = True/root_user = False/g' {} \;
     bash -c 'echo -e "#!/bin/bash\nLD_PRELOAD=/usr/lib/libfakechown.so \"\$@\"" >/usr/bin/sudo && chmod +x /usr/bin/sudo'
     dnf install -y epel-release
     dnf install -y vim mc glibc-langpack-en git
