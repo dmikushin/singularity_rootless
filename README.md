@@ -51,6 +51,5 @@ singularity instance stop rockylinux8_rootless
 
 1. Include modern version of Singularity CE compiled from source without suid
 2. Include static version of `proot`, in order to build containers without fakeroot
-3. Modify `dropbear` and `/etc/shells` to acknowledge the `SIGNULARITY_SHELL` setting
-4. Build the most recent version of fish from source
+3. Build the most recent version of fish from source
 
