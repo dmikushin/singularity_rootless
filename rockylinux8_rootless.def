@@ -5,6 +5,8 @@ From: rockylinux:8
     ./libfakechown.so /usr/lib/libfakechown.so
 
 %post
+    dnf install -y findutils
+    find /usr -type d -exec chmod +w {} \;
     sed -i 's/root_user = True/root_user = False/g' /usr/lib/python3.6/site-packages/dnf/cli/commands/*.py
     bash -c 'echo -e "#!/bin/bash\nLD_PRELOAD=/usr/lib/libfakechown.so \"\$@\"" >/usr/bin/sudo && chmod +x /usr/bin/sudo'
     dnf install -y epel-release
