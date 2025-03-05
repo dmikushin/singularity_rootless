@@ -2,15 +2,17 @@ Bootstrap: docker
 From: rockylinux:8
 
 %files
-    ./libfakechown.so /usr/lib/libfakechown.so
+    ./fakechown.c /fakechown.c
 
 %post
     dnf install -y findutils
     find /usr -type d -exec chmod +w {} \;
     find /usr/lib/python3.6/site-packages/dnf/cli/commands -type f -name "*.py" -exec sed -i 's/root_user = True/root_user = False/g' {} \;
-    bash -c 'echo -e "#!/bin/bash\nLD_PRELOAD=/usr/lib/libfakechown.so \"\$@\"" >/usr/bin/sudo && chmod +x /usr/bin/sudo'
     dnf install -y epel-release
-    dnf install -y vim mc glibc-langpack-en git
+    dnf install -y vim mc glibc-langpack-en git gcc zlib-devel make
+    gcc -O3 -g -shared -fPIC -o /usr/lib/libfakechown.so /fakechown.c -ldl
+    rm /fakechown.c
+    bash -c 'echo -e "#!/bin/bash\nLD_PRELOAD=/usr/lib/libfakechown.so \"\$@\"" >/usr/bin/sudo && chmod +x /usr/bin/sudo'
 
 #%startscript
 #    sudo /usr/sbin/dropbear -E -p ${1:-22220}
